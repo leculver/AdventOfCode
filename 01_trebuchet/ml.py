@@ -18,11 +18,12 @@ def defineModelOriginal():
     input_length = 57  # Length of your input sequences
     embedding_dim = 50  # Dimension of the embedding space
     lstm_units = 64  # Number of units in the LSTM layer
-
-    #model.add(layers.Embedding(input_dim=37, output_dim=100, input_length=57))
-    inputs = keras.Input(shape=(1,57))
-    x = layers.SimpleRNN(512, return_sequences=True, activation='relu')(inputs)
-    x = layers.SimpleRNN(512, activation='relu')(x)
+    
+    inputs = tf.keras.Input(shape=(1,input_length))
+    #x = layers.Embedding(input_dim=37, output_dim=100, input_length=57)(inputs)
+    #x = layers.Conv1D(64, 3, activation='relu')(x)
+    x = layers.LSTM(512, return_sequences=True, activation='relu')(inputs)
+    x = layers.LSTM(512, activation='relu')(x)
     x = layers.Dense(512, activation='relu')(x)
     x = layers.Dropout(0.1)(x)
     output1 = layers.Dense(10, activation='softmax', name='first_num')(x)
@@ -107,8 +108,18 @@ def defineModelLSTMBidirect():
     #model.add(layers.Dense(512, activation='relu'))
     #model.add(layers.Dropout(0.1))
     model.add(layers.Dense(10, activation='softmax'))
+    model.compile(
+        loss={
+            'first_num': 'sparse_categorical_crossentropy',
+            'second_num': 'sparse_categorical_crossentropy'
+        },
+        optimizer=keras.optimizers.Adam(learning_rate=0.001),
+        metrics={
+            'first_num': 'accuracy',
+            'second_num': 'accuracy'
+        }
+    )
 
-    model.compile(loss='sparse_categorical_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.001),  metrics=['accuracy'])
 
     return model
 
@@ -152,7 +163,7 @@ def convertToModelInput(value, l):
         else:
             assert(False)
 
-    return [x/36.0 for x in result]
+    return result
 
 def getTrainingData(count):
     x_source = [x for x in generateTrainingData(count)]
@@ -160,24 +171,35 @@ def getTrainingData(count):
     x_train = np.array([convertToModelInput(x, 57) for x in x_source])
     x_train = np.reshape(x_train, (-1, 1, 57))
     
-    y_train = np.array([getAnswerFirst(x)[0] for x in x_source])
-
-    return (x_source, x_train, y_train)
+    result = [getAnswerFirst(x) for x in x_source]
+    y_train_first = np.array([x[0] for x in result])
+    y_train_second = np.array([x[1] for x in result])
+    
+    return (x_source, x_train, y_train_first, y_train_second)
 
 def getTestData():
     from solution import inp as x_source
     x_train = np.array([convertToModelInput(x, 57) for x in x_source])
     
     x_train = np.reshape(x_train, (-1, 1, 57))
-
-    y_train = np.array([getAnswerFirst(x)[0] for x in x_source])
-    return (x_source, x_train, y_train)
+    
+    result = [getAnswerFirst(x) for x in x_source]
+    y_train_first = np.array([x[0] for x in result])
+    y_train_second = np.array([x[1] for x in result])
+    
+    return (x_source, x_train, y_train_first, y_train_second)
 
 model = defineModel()
 print(model.summary())
 
-(source, x_train, y_train) = getTrainingData(10000)
-model.fit(x_train, y_train, epochs=25, batch_size=64, verbose=2)
 
-(_, x_test, y_test) = getTestData()
-model.evaluate(x_test, y_test, batch_size=64, verbose=2)
+(source, x_train, y_train_first, y_train_second) = getTrainingData(100000)
+
+for i in range(10):
+    print(f"{source[i]} - {x_train[0]} - {y_train_first[i]} - {y_train_second[i]}")
+
+model.fit(x_train, [y_train_first, y_train_second], epochs=250, batch_size=64, verbose=2)
+
+(_, x_test, y_train_first, y_train_second) = getTestData()
+model.save("model.h5")
+model.evaluate(x_test, [y_train_first, y_train_second], batch_size=64, verbose=2)

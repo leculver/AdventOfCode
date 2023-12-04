@@ -5,6 +5,10 @@ VisualStudioVersion = 17.9.34327.274
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "01_trebuchet", "01_trebuchet\01_trebuchet.pyproj", "{5ACCA3BE-CC6E-43AE-AAB4-E34FCDBC2520}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "02_cube_conudrum", "02_cube_conudrum\02_cube_conudrum.pyproj", "{3E498959-B8B6-4FA6-BA1C-D9FBEC26FDD6}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "03_gear_ratios", "03_gear_ratios\03_gear_ratios.pyproj", "{B618A20B-3570-4DEA-877A-3123C6CA81B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +17,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5ACCA3BE-CC6E-43AE-AAB4-E34FCDBC2520}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5ACCA3BE-CC6E-43AE-AAB4-E34FCDBC2520}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E498959-B8B6-4FA6-BA1C-D9FBEC26FDD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E498959-B8B6-4FA6-BA1C-D9FBEC26FDD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B618A20B-3570-4DEA-877A-3123C6CA81B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B618A20B-3570-4DEA-877A-3123C6CA81B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
