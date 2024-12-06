@@ -14,9 +14,6 @@ with open("05_input.txt", encoding="utf8") as f:
             elif ',' in line:
                 PAGES_REQUESTED.append([int(x) for x in line.split(',')])
 
-            else:
-                raise ValueError("Invalid input")
-
 def is_valid_ordering(ordering):
     previous = set()
     for page in ordering:
