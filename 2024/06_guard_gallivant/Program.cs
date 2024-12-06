@@ -1,91 +1,95 @@
-﻿using System.Numerics.Tensors;
+﻿using System.Diagnostics;
 
 string[] lines = File.ReadAllLines("../../../06_input.txt");
 
-Tensor<byte> grid = new Tensor<byte>(lines.Length, lines[0].Length);
+(int Y, int X)[] directions = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
-
-
-char end = lines[0].Last();
 char[,] grid = new char[lines.Length, lines[0].Length];
 
-int posY = -1, posX = -1;
+int startY = -1, startX = -1;
 
 for (int i = 0; i < lines.Length; i++)
+{
     for (int j = 0; j < lines[i].Length; j++)
     {
         if (lines[i][j] == '^')
         {
-            posY = i;
-            posX = j;
+            startY = i;
+            startX = j;
         }
-        else
-        {
-            grid[i, j] = lines[i][j];
-        }
+
+        grid[i, j] = lines[i][j];
     }
+}
 
 // Print grid
-Console.WriteLine($"part1: {PerformWalk(grid, posY, posX)}");
+Console.WriteLine($"part1: {Part1(grid, startY, startX)}");
+Stopwatch sw = Stopwatch.StartNew();
+int part2 = Part2(grid, startY, startX);
+sw.Stop();
 
-static int PerformWalk(char[,] grid, int posY, int posX)
+Console.WriteLine($"part2: {part2}, elapsed: {sw.Elapsed}");
+
+int Part1(char[,] grid, int startY, int startX)
 {
-    int dirY = -1, dirX = 0;
-    int visited = 0;
+    HashSet<(int, int)> visited = [];
+
+    (int Y, int X) curr = (startY, startX);
+    int direction = 0;
+
     while (true)
     {
-        char curr = GetPosition(grid, posY, posX);
-        if (curr == 'E')
+        visited.Add(curr);
+        (int Y, int X) next = (curr.Y + directions[direction].Y, curr.X + directions[direction].X);
+        if (next.Y < 0 || next.Y >= grid.GetLength(0) || next.X < 0 || next.X >= grid.GetLength(1))
             break;
 
-        if (curr == '#')
-            throw new InvalidOperationException("Should not have reached here.");
-
-        if (curr != 'X')
+        if (grid[next.Y, next.X] == '#')
         {
-            visited++;
-            grid[posY, posX] = 'X';
+            direction = (direction + 1) % 4;
+            continue;
         }
 
-        char next = GetPosition(grid, posY + dirY, posX + dirX);
-        while (next == '#')
-        {
-            // make right hand turns
-            if (dirY == -1)
-            {
-                dirX = 1;
-                dirY = 0;
-            }
-            else if (dirX == 1)
-            {
-                dirX = 0;
-                dirY = 1;
-            }
-            else if (dirY == 1)
-            {
-                dirX = -1;
-                dirY = 0;
-            }
-            else if (dirX == -1)
-            {
-                dirX = 0;
-                dirY = -1;
-            }
-
-            next = GetPosition(grid, posY + dirY, posX + dirY);
-        }
-
-        posY += dirY;
-        posX += dirX;
+        curr = next;
     }
 
-    return visited;
+    return visited.Count;
 }
 
-static char GetPosition(char[,] grid, int posY, int posX)
+int Part2(char[,] grid, int startY, int startX)
 {
-    if (0 <= posX && posX < grid.GetLength(1) && 0 <= posY && posY < grid.GetLength(0))
-        return grid[posY, posX];
-    return 'E';
-}
+    int total = 0;
 
+    Parallel.For(0, grid.GetLength(0), i =>
+    {
+        for (int j = 0; j < grid.GetLength(1); j++)
+        {
+            HashSet<(int, int, int)> visited = [];
+            (int Y, int X) curr = (startY, startX);
+            int direction = 0;
+
+            while (true)
+            {
+                if (!visited.Add((curr.Y, curr.X, direction)))
+                {
+                    Interlocked.Increment(ref total);
+                    break;
+                }
+
+                (int Y, int X) next = (curr.Y + directions[direction].Y, curr.X + directions[direction].X);
+                if (next.Y < 0 || next.Y >= grid.GetLength(0) || next.X < 0 || next.X >= grid.GetLength(1))
+                    break;
+
+                if (grid[next.Y, next.X] == '#' || (next.Y == i && next.X == j))
+                {
+                    direction = (direction + 1) % 4;
+                    continue;
+                }
+
+                curr = next;
+            }
+        }
+    });
+
+    return total;
+}
