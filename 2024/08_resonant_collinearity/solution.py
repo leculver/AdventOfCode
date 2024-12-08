@@ -40,11 +40,11 @@ def part1():
     return len(resonance)
 
 def is_on_line(p1, p2, point):
-    x1, y1 = p1
-    x2, y2 = p2
-    x, y = point
+    y1, x1 = p1
+    y2, x2 = p2
+    y, x = point
 
-    return (y - y1) * (x2 - x1) == (y2 - y1) * (x - x1)
+    return (x - x1) * (y2 - y1) == (x2 - x1) * (y - y1)
 
 def part2():
     resonance = set()
