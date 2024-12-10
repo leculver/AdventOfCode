@@ -30,6 +30,27 @@ static long Part1()
     return GetChecksum(filesystem);
 }
 
+static long Part2()
+{
+    (List<int?> filesystem, Dictionary<int, (int Pos, int Count)> ranges) = GetInput();
+
+    for (int currId = ranges.Keys.Max(); currId >= 0; currId--)
+    {
+        (int filePosition, int fileLength) = ranges[currId];
+        int slot = FindFittingSlot(filesystem, fileLength);
+        if (slot <= filePosition)
+        {
+            for (int i = 0; i < fileLength; i++)
+            {
+                filesystem[slot + i] = currId;
+                filesystem[filePosition + i] = null;
+            }
+        }
+    }
+
+    return GetChecksum(filesystem);
+}
+
 static int FindFittingSlot(List<int?> filesystem, int length)
 {
     int lpos = 0;
@@ -52,27 +73,6 @@ static int FindFittingSlot(List<int?> filesystem, int length)
     }
 
     return int.MaxValue;
-}
-
-static long Part2()
-{
-    (List<int?> filesystem, Dictionary<int, (int Pos, int Count)> ranges) = GetInput();
-
-    for (int currId = ranges.Keys.Max(); currId >= 0; currId--)
-    {
-        (int filePosition, int fileLength) = ranges[currId];
-        int slot = FindFittingSlot(filesystem, fileLength);
-        if (slot <= filePosition)
-        {
-            for (int i = 0; i < fileLength; i++)
-            {
-                filesystem[slot + i] = currId;
-                filesystem[filePosition + i] = null;
-            }
-        }
-    }
-
-    return GetChecksum(filesystem);
 }
 
 static long GetChecksum(List<int?> filesystem)
@@ -112,5 +112,6 @@ static (List<int?>, Dictionary<int, (int Pos, int Count)>) GetInput()
         free = !free;
     }
 
+    Console.WriteLine($"Filesystem: {filesystem.Count}");
     return (filesystem, ranges);
 }
