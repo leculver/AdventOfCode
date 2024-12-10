@@ -1,9 +1,7 @@
 ﻿const string InputFile = "09_input.txt";
 
-
 Console.WriteLine($"Part 1: {Part1():n0}");
 Console.WriteLine($"Part 2: {Part2():n0}");
-
 
 static long Part1()
 {
