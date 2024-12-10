@@ -19,11 +19,8 @@ for (int i = 0; i < lines.Length; i++)
 Console.WriteLine($"part1: {Solve(grid, starts, true)}");
 Console.WriteLine($"part2: {Solve(grid, starts, false)}");
 
-static long Solve(char[,] gridOriginal, List<(int Y, int X)> starts, bool unique)
+static long Solve(char[,] grid, List<(int Y, int X)> starts, bool unique)
 {
-    char[,] grid = new char[gridOriginal.GetLength(0), gridOriginal.GetLength(1)];
-    Array.Copy(gridOriginal, grid, gridOriginal.Length);
-
     int total = 0;
     Queue<(int Y, int X)> queue = new();
     HashSet<(int Y, int X)> visited = new();
