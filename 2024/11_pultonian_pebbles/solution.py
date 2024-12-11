@@ -40,13 +40,15 @@ def smart_solution(stones, steps):
         curr[stone] = curr.get(stone, 0) + 1
 
     start = time()
-    for _ in range(steps):
+    for i in range(steps):
         next_stones = {}
         for stone, count in curr.items():
             for new_stone in apply_rule(stone):
                 next_stones[new_stone] = next_stones.get(new_stone, 0) + count
 
         curr = next_stones
+
+        print(f"Step {i}: {time() - start}, with {sum(curr.values())} stones")
 
     result = sum(curr.values())
     print(f"Total time: {time() - start}, with {result} stones")
@@ -59,3 +61,5 @@ print(STONES)
 print(f"part1 dumb:  {dumb_solution(STONES, 25)}")
 print(f"part1 smart: {smart_solution(STONES, 25)}")
 print(f"part2: {smart_solution(STONES, 75):_}")
+
+print(f"part2_all {smart_solution(STONES, 1000000):,}")
