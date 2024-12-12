@@ -13,8 +13,9 @@ def consider_fence(plot, x, y, dx, dy, fence_considered):
 
     fence_considered.add((x, y, dx, dy))
 
-    # walk perpendicular to the direction of the edge
     seed = plot[x][y]
+
+    # walk perpendicular to the direction of the edge, note x <- dy, y <- dx
     step_x, step_y = dy, dx
 
     # walk one direction
