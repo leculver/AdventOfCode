@@ -19,18 +19,14 @@ def solve_for_presses(data, max_val):
         if determinant == 0:
             continue
 
-        x_sol = (d * x - b * y) / determinant
-        y_sol = (-c * x + a * y) / determinant
+        x_sol = (d * x - b * y) // determinant
+        y_sol = (-c * x + a * y) // determinant
 
-        x_sol_int = round(x_sol)
-        y_sol_int = round(y_sol)
+        if max_val is not None and (x_sol > max_val or y_sol > max_val):
+            continue
 
-        if max_val is not None:
-            if x_sol_int > max_val or y_sol_int > max_val:
-                continue
-
-        if a * x_sol_int + b * y_sol_int == x and c * x_sol_int + d * y_sol_int == y:
-            solutions.append([x_sol_int, y_sol_int])
+        if a * x_sol + b * y_sol == x and c * x_sol + d * y_sol == y:
+            solutions.append([x_sol, y_sol])
 
     return solutions
 
